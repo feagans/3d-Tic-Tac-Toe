@@ -9,3 +9,4 @@ Todos:
 - allow player to save game and write data to a file. load when starting program
 - create ascii art for winning / losing entire game.
 - have loading ... effect
+- have a scoreboard "NAME beat the bot in X turns"

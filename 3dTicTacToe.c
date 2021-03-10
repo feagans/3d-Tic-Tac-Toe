@@ -14,8 +14,8 @@
 #define BOARD_SIZE 9
 
 // Game board states
-#define X 1 // X WON
-#define O 0 // O WON
+#define X 9
+#define O 1
 #define TIE INT_MAX
 #define INCOMPLETE INT_MIN // Game still in progress
 
@@ -28,15 +28,45 @@ void checkpoint(void)
 }
 
 // Fill game board with all INT_MIN = empty.
-void empty_board(char board[NUM_BOARDS][BOARD_SIZE])
+void empty_board(char board[NUM_BOARDS][BOARD_SIZE], int board_states[NUM_BOARDS])
 {
 	for (int i = 0; i < NUM_BOARDS; i++)
-			for (int j = 0; j < BOARD_SIZE; j++)
-				board[i][j] = '\0';
+	{
+		for (int j = 0; j < BOARD_SIZE; j++)
+		{
+			board[i][j] = '\0';
+		}
+		board_states[i] = INCOMPLETE;
+	}
+}
+
+// Prints out blank board with positions filled in.
+void print_ref_board()
+{
+	printf("  Board 0 \t  Board 1 \t  Board 2 \n");
+	printf(" 0 | 1 | 2 \t 0 | 1 | 2 \t 0 | 1 | 2 \n");
+	printf("-----------\t-----------\t-----------\n");
+	printf(" 3 | 4 | 5 \t 3 | 4 | 5 \t 3 | 4 | 5 \n");
+	printf("-----------\t-----------\t-----------\n");
+	printf(" 6 | 7 | 8 \t 6 | 7 | 8 \t 6 | 7 | 8 \n\n\n\n");
+
+	printf("  Board 3 \t  Board 4 \t  Board 5 \n");
+	printf(" 0 | 1 | 2 \t 0 | 1 | 2 \t 0 | 1 | 2 \n");
+	printf("-----------\t-----------\t-----------\n");
+	printf(" 3 | 4 | 5 \t 3 | 4 | 5 \t 3 | 4 | 5 \n");
+	printf("-----------\t-----------\t-----------\n");
+	printf(" 6 | 7 | 8 \t 6 | 7 | 8 \t 6 | 7 | 8 \n\n\n\n");
+
+	printf("  Board 6 \t  Board 7 \t  Board 8 \n");
+	printf(" 0 | 1 | 2 \t 0 | 1 | 2 \t 0 | 1 | 2 \n");
+	printf("-----------\t-----------\t-----------\n");
+	printf(" 3 | 4 | 5 \t 3 | 4 | 5 \t 3 | 4 | 5 \n");
+	printf("-----------\t-----------\t-----------\n");
+	printf(" 6 | 7 | 8 \t 6 | 7 | 8 \t 6 | 7 | 8 \n\n\n\n");
 }
 
 // Prints game board out with board headers and lists each board's state.
-void printBoards(char board[NUM_BOARDS][BOARD_SIZE], int board_states[NUM_BOARDS])
+void print_boards(char board[NUM_BOARDS][BOARD_SIZE], int board_states[NUM_BOARDS])
 {
 	int cur_board = 0;
 	int max_board = 2;
@@ -70,7 +100,7 @@ void printBoards(char board[NUM_BOARDS][BOARD_SIZE], int board_states[NUM_BOARDS
 
 		for (int j = cur_board; j < cur_board + 3; j++)
 		{
-			if (board_states[j] == 1)
+			if (board_states[j] == X)
 			{
 				if (j == cur_board)
 					strcpy(board_state1, "X WON");
@@ -82,7 +112,7 @@ void printBoards(char board[NUM_BOARDS][BOARD_SIZE], int board_states[NUM_BOARDS
 					strcpy(board_state3, "X WON");
 			}
 
-			else if (board_states[j] == 0)
+			else if (board_states[j] == O)
 			{
 				if (j == cur_board)
 					strcpy(board_state1, "O WON");
@@ -94,7 +124,7 @@ void printBoards(char board[NUM_BOARDS][BOARD_SIZE], int board_states[NUM_BOARDS
 					strcpy(board_state3, "O WON");
 			}
 
-			else if (board_states[j] == INT_MAX)
+			else if (board_states[j] == TIE)
 			{
 				if (j == cur_board)
 					strcpy(board_state1, " TIE ");
@@ -107,7 +137,7 @@ void printBoards(char board[NUM_BOARDS][BOARD_SIZE], int board_states[NUM_BOARDS
 			}
 
 			// If board still in progress, char will be empty.
-			else if (board_states[j] == INT_MIN)
+			else if (board_states[j] == INCOMPLETE)
 			{
 				if (j == cur_board)
 					strcpy(board_state1, "");
@@ -128,6 +158,39 @@ void printBoards(char board[NUM_BOARDS][BOARD_SIZE], int board_states[NUM_BOARDS
 		cur_board += 3;
 		max_board += 3;
 	}
+}
+
+// Checks if move is valid. Returns true if valid, false otherwise.
+bool valid_move(int move, char board[NUM_BOARDS][BOARD_SIZE], int states[NUM_BOARDS])
+{
+	int curr_board;
+	// Move must be betweem 00 and 88 to be valid.
+	if (move < 0 || move > 88)
+	{
+		printf("Move is not valid position on board.\n");
+		return false;
+	}
+
+	// To get board from move: (move / 10) % 10
+	int dest_board = (move / 10) % 10;
+
+	// To get position: move % 10
+	int dest_pos = move % 10;
+
+	// Check if attempting to go to a board that is already finished.
+	if (states[dest_board] != INCOMPLETE)
+	{
+		printf("This board is not playable.\n");
+		return false;
+	}
+
+	// Check if position already has a marker.
+	if (board[dest_board][dest_pos] != '\0')
+	{
+		printf("This position is not empty.\n");
+		return false;
+	}
+	return true;
 }
 
 // Fill board with random values 1 or 0 for testing purposes
@@ -210,7 +273,9 @@ void tutorial(void)
 	printf("(assuming board 4 is not yet full and that game is unfinished).\n\n");
 
 	printf(" 0 | 1 | 2 \n");
+	printf("-----------\n");
 	printf(" 3 | 4 | 5 \n");
+	printf("-----------\n");
 	printf(" 6 | 7 | 8 \n\n");
 
 	checkpoint();
@@ -356,8 +421,13 @@ void start_game(char board[NUM_BOARDS][BOARD_SIZE])
 {
 	int user_selection = 0;
 	bool coin = true;
-	int states[NUM_BOARDS] = {0, 1, 0, INT_MAX, INT_MIN, 0, 1, 1, INT_MIN};
+	bool playerX = false;
+	bool winner = false;
+	int states[NUM_BOARDS];
+	int turn = 1;
+	char marker;
 	printf("Starting a new game...\n\n");
+	empty_board(board, states);
 	while(coin)
 	{
 		printf("Pick heads or tails for coin flip that decides who will go first.\n");
@@ -365,21 +435,60 @@ void start_game(char board[NUM_BOARDS][BOARD_SIZE])
 		printf("1: Tails\n");
 		scanf("%d", &user_selection);
 		sleep(2);
-		// User picked heads
+
 		if (user_selection == 0 || user_selection == 1)
 		{
 			if (coin_flip(user_selection))
-				printf("You go first. You are player X.\n");
+			{
+				playerX = true;
+				marker = 'X';
+				printf("\nYou go first. You are player X.\n\n");
+			}
 
 			else
-				printf("You go second. You are player O.\n");
-
+			{
+				playerX = false;
+				marker = 'O';
+				printf("\nYou go second. You are player O.\n\n");
+				break;
+			}
 			coin = false;
 		}
 	}
 
-	empty_board(board);
-	printBoards(board, states);
+	// Continue until there is a winner or a tie.
+	while(!winner)
+	{
+
+		// If user is player X just started the game they can pick any position on any board.
+		if (playerX && turn == 1)
+		{
+			print_boards(board, states);
+			printf("What board and position would you like to place an X?\n");
+			printf("Ex: board 4 position 6 you would enter 46\n");
+			scanf("%d", &user_selection);
+
+			// Make sure this is valid move, if it is, add to board.
+			if (valid_move(user_selection, board, states))
+				board[(user_selection / 10) % 10][user_selection % 10] = marker;
+			else
+				continue;
+		}
+
+		// Alternate turns between player and bot.
+		// PlayerX goes before bot
+		else if (playerX)
+
+		// Bot will make move. Check if turn == 1.
+
+		// PlayerO goes after bot
+		if (!playerX)
+
+		// Add to turn counter. A turn is full rotation back to player.
+		turn++;
+		continue;
+
+	}
 }
 
 int main(void)
@@ -399,7 +508,7 @@ int main(void)
 		printf("Menu Selection\n");
 		printf("----------------------------------------\n");
 		printf("0: View a tutorial on how to play\n");
-		printf("1: Continue game in progress\n");
+		printf("1: Load a saved game\n");
 		printf("2: Start a new game\n");
 		printf("3: Quit game\n");
 		printf("----------------------------------------\n");
