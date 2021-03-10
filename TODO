@@ -2,11 +2,13 @@ Todos:
 ==========================
 - Add tails ASCII art
 - Finish start_game where user can pick where to go on board
+- During each player turn, they can enter certain number and it saves game and they return to menu.
 - create bot that plays with user
 - implement win / lose / tie states
 - different bot level difficulties
 - allow player to play with friend 2 Player
+- Check if double win on one board, add to score
 - allow player to save game and write data to a file. load when starting program
 - create ascii art for winning / losing entire game.
 - have loading ... effect
-- have a scoreboard "NAME beat the bot in X turns"
+- have a scoreboard "NAME beat the bot in X turns with score Y"
