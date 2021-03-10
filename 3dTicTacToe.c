@@ -7,9 +7,18 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 #define NUM_BOARDS 9
 #define BOARD_SIZE 9
+
+// Waits for user to hit enter so tutorial doesnt give a huge wall of text at once.
+void checkpoint(void)
+{
+	printf("\nPress enter to continue\n\n");
+	int enter = 0;
+	while (enter != '\r' && enter != '\n') { enter = getchar(); }
+}
 
 void printBoards(int board[NUM_BOARDS][BOARD_SIZE])
 {
@@ -67,8 +76,16 @@ int fillBoards (int board[NUM_BOARDS][BOARD_SIZE])
 	}
 }
 
+// Prints out all board values for debugging.
+void printBoardValues(int board[NUM_BOARDS][BOARD_SIZE])
+{
+	for (int i = 0; i < 9; i++)
+		for (int j = 0; j < 9; j++)
+			printf("BOARD [%d][%d] = %d\n", i, j, board[i][j]);
+}
+
 // Explain the game and show examples.
-void tutorial()
+void tutorial(void)
 {
 	printf("\nLoading game tutorial...\n\n");
 	printf("-------------------------------------------------------------------------------\n");
@@ -80,17 +97,29 @@ void tutorial()
 	printf("Players alternate placing Xs and Os on a 3x3 game board\n");
 	printf("until a player gets 3 in a row, column, or diagonal.\n");
 	printf("X always goes first.\n\n");
+
+	// For some reason, I the first press enter to continue does not work need an extra.
+	int enter = 0;
+	while (enter != '\r' && enter != '\n') { enter = getchar(); }
+
+	checkpoint();
+
 	printf(" X | O | O \n");
 	printf(" O | X | O \n");
 	printf(" O | O | X \n");
 	printf("\nPlayer X won game\n\n");
+
+	checkpoint();
+
 	printf("If neither players are able to get 3 in these patterns and the board fills up,\n");
 	printf("it is a draw and neither players win.\n");
 	printf("This is known as a scratch or cat's game or cat's scratch.\n\n");
 	printf(" X | O | X \n");
-	printf(" X | 0 | O \n");
+	printf(" X | O | O \n");
 	printf(" O | X | X \n");
 	printf("\nCat's scratch game\n");
+
+	checkpoint();
 
 	printf("-------------------------------------------------------------------------------\n");
 	printf("3D Tic-Tac-Toe\n");
@@ -99,21 +128,28 @@ void tutorial()
 	printf("Where you place your marker on each board determines what board your\n");
 	printf("oppenent will play on next turn.\n\n");
 
+	checkpoint();
+
 	printf("For example, if player X places their marker on position 4\n");
-	printf("then player 0 will be forced to play on board 4\n");
+	printf("then player O will be forced to play on board 4\n");
 	printf("(assuming board 4 is not yet full and that game is unfinished).\n\n");
 
 	printf(" 0 | 1 | 2 \n");
 	printf(" 3 | 4 | 5 \n");
 	printf(" 6 | 7 | 8 \n\n");
 
+	checkpoint();
 
-	printf("If the board that is currently being played on's position\n");
-	printf("is marked, opponent will continue to play on that board as normal.\n\n");
+	printf("If a player marks the position of the board that is currently being played on,\n");
+	printf("the opponent will continue to play on that board as normal.\n\n");
 
+	checkpoint();
 
-	printf("In the case where a player places marker on a position where that board is\n");
-	printf("full or has already been won:\n\n");
+	printf("If a player places marker on a position where that board is\n");
+	printf("full or has already been won, opponent can choose what board to go to.\n\n");
+
+	checkpoint();
+
 	printf("  Board 0 \t  Board 1 \t  Board 2 \n");
 	printf("   |   | X \t   |   |   \t   |   |   \n");
 	printf("-----------\t-----------\t-----------\n");
@@ -143,13 +179,16 @@ void tutorial()
 	printf("board to play on. This is a bad move by player X since player O\n");
 	printf("can choose to play on board 2 in position 0 and win that board.\n");
 
+	checkpoint();
 
 	printf("-------------------------------------------------------------------------------\n");
 	printf("How to win the game:\n");
 	printf("-------------------------------------------------------------------------------\n");
 	printf("To win the game, a player must win 3 boards in a row, column, or diagonal.\n");
-	printf("If neither players have 3 wins in these patterns,\n");
-	printf("the entire game is a cat's scratch no matter who won more boards.\n\n");
+	printf("If neither players have 3 wins in these patterns after filling up all boards,\n");
+	printf("the game is a cat's scratch no matter who won more boards.\n\n");
+
+	checkpoint();
 
 	printf("  Board 0 \t  Board 1 \t  Board 2 \n");
 	printf("   |   | X \t O | X |   \t O |   |   \n");
@@ -178,15 +217,11 @@ void tutorial()
 	printf("X has won boards 0 & 3 & 6.\n");
 	printf("These wins are in a column, thus X wins the entire game.\n\n");
 
-	printf("Ready to play?\n\n");
-}
+	checkpoint();
 
-// Prints out all board values for debugging.
-void printBoardValues(int board[NUM_BOARDS][BOARD_SIZE])
-{
-	for (int i = 0; i < 9; i++)
-		for (int j = 0; j < 9; j++)
-			printf("BOARD [%d][%d] = %d\n", i, j, board[i][j]);
+	printf("Ready to play?\n\n");
+
+	checkpoint();
 }
 
 int main(void)
@@ -226,6 +261,7 @@ int main(void)
 		{
 			printf("Loading saved game...\n");
 		}
+
 		// Start new game
 		else if (user_selection == 2)
 			printf("Starting a new game...\n");
