@@ -1,0 +1,11 @@
+Todos:
+==========================
+- Add tails ASCII art
+- Finish start_game where user can pick where to go on board
+- create bot that plays with user
+- implement win / lose / tie states
+- different bot level difficulties
+- allow player to play with friend 2 Player
+- allow player to save game and write data to a file. load when starting program
+- create ascii art for winning / losing entire game.
+- have loading ... effect
