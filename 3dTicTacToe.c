@@ -235,7 +235,7 @@ bool board_state(char board[NUM_BOARDS][BOARD_SIZE], int state[NUM_BOARDS], int 
 
 // Checks if a board state change causes a change in entire game state.
 // Returns true if there is a change in game state, false otherwise.
-bool game_state(int state[NUM_BOARDS])
+bool game_state(int state[NUM_BOARDS], char marker)
 {
 	bool tie = true;
 	for (int i = 0; i < NUM_BOARDS; i++)
@@ -248,11 +248,12 @@ bool game_state(int state[NUM_BOARDS])
 		if (state[wins[i][0]] == O && state[wins[i][1]] == O && state[wins[i][2]] == O
 			|| state[wins[i][0]] == X && state[wins[i][1]] == X && state[wins[i][2]] == X)
 		{
-			if (state[wins[i][0]] == O)
-				printf("Player O WON THE GAME!\n\n");
+			// Check if pplayer or bot won.
+			if (state[wins[i][0]] == O && marker == 'O' || state[wins[i][0]] == X && marker == 'X'  )
+				printf("YOU WON THE GAME! XD\n\n");
 
 			else
-				printf("Player X WON THE GAME!\n\n");
+				printf("YOU LOST! >:(\n\n");
 			return true;
 		}
 	}
@@ -270,9 +271,9 @@ bool game_state(int state[NUM_BOARDS])
 int fillBoards(char board[NUM_BOARDS][BOARD_SIZE])
 {
 	srand(time(NULL));
-	for (int i = 0; i < 9; i++)
+	for (int i = 0; i < BOARD_SIZE; i++)
 	{
-		for (int j = 0; j < 9; j++)
+		for (int j = 0; j < BOARD_SIZE; j++)
 		{
 			// Generate random number 1 to 100
 			int num = rand() % 100 + 1;
@@ -565,7 +566,7 @@ void start_game(char board[NUM_BOARDS][BOARD_SIZE])
 
 				// Check if move changed board state. If it did, check entire game state.
 			if (board_state(board, states, user_selection))
-				game_state(states);
+				game_state(states, marker);
 			}
 
 			else
